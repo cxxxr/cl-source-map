@@ -57,7 +57,43 @@
             (mapping :generated-line 2 :generated-column 1))))
   (ok (= 1 (mapping-list::compare-by-generated-position-inflated
             (mapping :generated-line 3)
-            (mapping :generated-line 2)))))
+            (mapping :generated-line 2))))
+  (ok (= -1 (mapping-list::compare-by-generated-position-inflated
+             (mapping :generated-line 2 :source "aaa")
+             (mapping :generated-line 2 :source "abb"))))
+  (ok (= 1 (mapping-list::compare-by-generated-position-inflated
+            (mapping :generated-line 2 :source "bbb")
+            (mapping :generated-line 2 :source "abb"))))
+  (ok (= 0 (mapping-list::compare-by-generated-position-inflated
+            (mapping :generated-line 2 :source "abb")
+            (mapping :generated-line 2 :source "abb"))))
+  (ok (= -1 (mapping-list::compare-by-generated-position-inflated
+             (mapping :generated-line 2 :source "aaa" :original-line 1)
+             (mapping :generated-line 2 :source "aaa" :original-line 2))))
+  (ok (= 1 (mapping-list::compare-by-generated-position-inflated
+            (mapping :generated-line 2 :source "aaa" :original-line 2)
+            (mapping :generated-line 2 :source "aaa" :original-line 1))))
+  (ok (= 0 (mapping-list::compare-by-generated-position-inflated
+            (mapping :generated-line 2 :source "aaa" :original-line 1)
+            (mapping :generated-line 2 :source "aaa" :original-line 1))))
+  (ok (= -1 (mapping-list::compare-by-generated-position-inflated
+             (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1)
+             (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 2))))
+  (ok (= 1 (mapping-list::compare-by-generated-position-inflated
+            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 2)
+            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1))))
+  (ok (= 0 (mapping-list::compare-by-generated-position-inflated
+            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1)
+            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1))))
+  (ok (= -1 (mapping-list::compare-by-generated-position-inflated
+             (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1 :name "abc")
+             (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1 :name "abd"))))
+  (ok (= 1 (mapping-list::compare-by-generated-position-inflated
+            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1 :name "abd")
+            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1 :name "abc"))))
+  (ok (= 0 (mapping-list::compare-by-generated-position-inflated
+            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1 :name "abc")
+            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1 :name "abc")))))
 
 (deftest mapping-list.generated-position-after-p
   (ok (mapping-list::generated-position-after-p
