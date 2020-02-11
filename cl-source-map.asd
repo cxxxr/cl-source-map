@@ -1,3 +1,6 @@
 (defsystem "cl-source-map"
   :serial t
-  :components ((:file "source-map-generator")))
+  :components ((:file "util")
+               (:file "mapping")
+               (:file "mapping-list")
+               (:file "source-map-generator")))
