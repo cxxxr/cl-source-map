@@ -39,6 +39,26 @@
     (ok (equal "a" (gethash "/root/hoge.lisp" (generator::.source-contents gen))))
     (ok (= 1 (hash-table-count (generator::.source-contents gen))))))
 
+(deftest compare-by-generated-position-inflated
+  (ok (= -1 (mapping-list::compare-by-generated-position-inflated
+             (mapping :generated-line 1)
+             (mapping :generated-line 2))))
+  (ok (= 0 (mapping-list::compare-by-generated-position-inflated
+            (mapping :generated-line 2)
+            (mapping :generated-line 2))))
+  (ok (= -1 (mapping-list::compare-by-generated-position-inflated
+             (mapping :generated-line 2 :generated-column 2)
+             (mapping :generated-line 2 :generated-column 3))))
+  (ok (= 0 (mapping-list::compare-by-generated-position-inflated
+            (mapping :generated-line 2 :generated-column 2)
+            (mapping :generated-line 2 :generated-column 2))))
+  (ok (= 1 (mapping-list::compare-by-generated-position-inflated
+            (mapping :generated-line 2 :generated-column 2)
+            (mapping :generated-line 2 :generated-column 1))))
+  (ok (= 1 (mapping-list::compare-by-generated-position-inflated
+            (mapping :generated-line 3)
+            (mapping :generated-line 2)))))
+
 (deftest mapping-list.generated-position-after-p
   (ok (mapping-list::generated-position-after-p
        (mapping :generated-line 1)
@@ -93,4 +113,3 @@
     (ok (null (generator::.sources gen)))
     (ok (equal (mapping-list:to-list (generator::.mappings gen))
                (list mapping1)))))
-
