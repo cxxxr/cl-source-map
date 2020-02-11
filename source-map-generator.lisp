@@ -6,7 +6,8 @@
   (:local-nicknames (:mapping
                      :cl-source-map/mapping))
   (:export :source-map-generator
-           :set-source-content))
+           :set-source-content
+           :add-mapping))
 (in-package :cl-source-map/source-map-generator)
 
 (defgeneric set-source-content (source-map-generator source-file source-content))

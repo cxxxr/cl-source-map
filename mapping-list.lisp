@@ -34,9 +34,10 @@
         (line-b (mapping-generated-line mapping-b))
         (column-a (mapping-generated-column mapping-a))
         (column-b (mapping-generated-column mapping-b)))
-    (or (> line-b line-a)
+    (or (< line-a line-b)
         (and (= line-a line-b) (<= column-a column-b))
-        (compare-by-generated-position-inflated mapping-a mapping-b))))
+        (<= (compare-by-generated-position-inflated mapping-a mapping-b)
+            0))))
 
 (defgeneric add-mapping (mapping-list mapping))
 
