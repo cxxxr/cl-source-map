@@ -1,8 +1,10 @@
 (defpackage :cl-source-map/mapping-list
   (:use :cl
-        :cl-source-map/mapping)
+        :cl-source-map/mapping
+        :cl-source-map/util)
   (:export :mapping-list
-           :add-mapping))
+           :add-mapping
+           :to-list))
 (in-package :cl-source-map/mapping-list)
 
 (defun compare-by-generated-position-inflated (mapping-a mapping-b)
@@ -45,10 +47,11 @@
             0))))
 
 (defgeneric add-mapping (mapping-list mapping))
+(defgeneric to-list (mapping-list))
 
 (defclass mapping-list ()
   ((list
-    :initform '()
+    :initform (make-tlist)
     :accessor .list)
    (sorted
     :initform t
@@ -58,8 +61,20 @@
     :accessor .last)))
 
 (defmethod add-mapping ((this mapping-list) mapping)
-  (push mapping (.list this))
+  (tlist-add-right (.list this) mapping)
   (if (or (null (.last this))
           (generated-position-after-p (.last this) mapping))
       (setf (.last this) mapping)
       (setf (.sorted this) nil)))
+
+(defmethod to-list ((this mapping-list))
+  (if (.sorted this)
+      (tlist-to-list (.list this))
+      (let ((sorted-list
+              (sort (copy-list (tlist-to-list (.list this)))
+                    (lambda (x y)
+                      (>= 0 (compare-by-generated-position-inflated x y)))))
+            (tlist (.list this)))
+        (setf (.list this) (list-to-tlist sorted-list)
+              (.sorted this) t)
+        sorted-list)))
