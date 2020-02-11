@@ -1,8 +1,7 @@
 (defpackage :cl-source-map/source-map-generator
   (:use :cl)
   (:export :source-map-generator
-           :add-source-content
-           :remove-source-content))
+           :set-source-content))
 (in-package :cl-source-map/source-map-generator)
 
 (defclass source-map-generator ()
@@ -31,19 +30,17 @@
     :initform (make-hash-table :test 'equal)
     :accessor .source-contents)))
 
-(defgeneric add-source-content (source-map-generator source-file source-content))
-(defgeneric remove-source-content (source-map-generator source-file))
+(defgeneric set-source-content (source-map-generator source-file source-content))
 
 (defun ensure-source-file (source-map-generator source-file)
-  (if (.source-root source-map-generator)
-      (merge-pathnames source-file (.source-root source-map-generator))
-      (pathname source-file)))
+  (namestring
+   (if (.source-root source-map-generator)
+       (merge-pathnames source-file (.source-root source-map-generator))
+       source-file)))
 
-(defmethod add-source-content ((this source-map-generator) source-file source-content)
+(defmethod set-source-content ((this source-map-generator) source-file source-content)
   (let ((source-file (ensure-source-file this source-file)))
-    (setf (gethash source-file (.source-contents this))
-          source-content)))
-
-(defmethod remove-source-content ((this source-map-generator) source-file)
-  (let ((source-file (ensure-source-file this source-file)))
-    (remhash source-file (.source-contents this))))
+    (if source-content
+        (setf (gethash source-file (.source-contents this))
+              source-content)
+        (remhash source-file (.source-contents this)))))
