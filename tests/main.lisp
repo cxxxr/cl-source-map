@@ -1,9 +1,12 @@
 (defpackage :cl-source-map/tests/main
   (:use :cl
         :rove
+        :cl-source-map/mapping
         :cl-source-map/source-map-generator)
   (:local-nicknames (:generator
-                     :cl-source-map/source-map-generator)))
+                     :cl-source-map/source-map-generator))
+  (:local-nicknames (:mapping-list
+                     :cl-source-map/mapping-list)))
 (in-package :cl-source-map/tests/main)
 
 (deftest source-map-generator.make-instance
@@ -35,3 +38,28 @@
     (set-source-content gen "hoge.lisp" "a")
     (ok (equal "a" (gethash "/root/hoge.lisp" (generator::.source-contents gen))))
     (ok (= 1 (hash-table-count (generator::.source-contents gen))))))
+
+(deftest mapping-list.generated-position-after-p
+  (ok (mapping-list::generated-position-after-p
+       (mapping :generated-line 1)
+       (mapping :generated-line 2)))
+  (ok (mapping-list::generated-position-after-p
+       (mapping :generated-line 2)
+       (mapping :generated-line 2)))
+  (ok (mapping-list::generated-position-after-p
+       (mapping :generated-line 2 :generated-column 2)
+       (mapping :generated-line 2 :generated-column 3)))
+  (ok (mapping-list::generated-position-after-p
+       (mapping :generated-line 2 :generated-column 2)
+       (mapping :generated-line 2 :generated-column 2)))
+  (ng (mapping-list::generated-position-after-p
+       (mapping :generated-line 2 :generated-column 2)
+       (mapping :generated-line 2 :generated-column 1)))
+  (ng (mapping-list::generated-position-after-p
+       (mapping :generated-line 3)
+       (mapping :generated-line 2))))
+
+(deftest source-map-generator.add-mapping
+  (let ((gen (make-instance 'source-map-generator)))
+    (add-mapping gen (mapping :generated-line 1))
+    ))

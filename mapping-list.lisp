@@ -36,6 +36,11 @@
         (column-b (mapping-generated-column mapping-b)))
     (or (< line-a line-b)
         (and (= line-a line-b) (<= column-a column-b))
+        ;; ???:
+        ;; compare-by-generated-position-inflated関数の中でsource以降の値が比較される場合、
+        ;; generated-lineとgenerated-columnが同じ値である必要があるが
+        ;; この上の条件式でgenerated-lineとgenerated-columnが同じ値ならここに辿りつかない
+        ;; なのでsource以降の条件式は評価されることがないデッドコードになるはず
         (<= (compare-by-generated-position-inflated mapping-a mapping-b)
             0))))
 
