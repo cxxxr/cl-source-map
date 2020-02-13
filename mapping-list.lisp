@@ -2,7 +2,8 @@
   (:use :cl
         :cl-source-map/mapping
         :cl-source-map/util)
-  (:export :mapping-list
+  (:export :compare-by-generated-position-inflated
+           :mapping-list
            :add-mapping
            :to-list))
 (in-package :cl-source-map/mapping-list)
