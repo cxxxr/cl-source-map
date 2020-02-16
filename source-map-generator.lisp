@@ -5,7 +5,7 @@
                      :cl-source-map/mapping-list)
                     (:mapping
                      :cl-source-map/mapping)
-                    (:base64-blq
+                    (:base64-vlq
                      :cl-source-map/base64-vlq))
   (:export :source-map-generator
            :set-source-content
@@ -94,28 +94,28 @@
                                 previous-mapping)
                          (return-from continue))
                        (write-char #\, out))))
-              (write-string (base64-blq:encode (- (mapping:mapping-generated-column mapping)
+              (write-string (base64-vlq:encode (- (mapping:mapping-generated-column mapping)
                                                   previous-generated-column))
                             out)
               (setf previous-generated-column (mapping:mapping-generated-column mapping))
               (when (mapping:mapping-source mapping)
                 (let ((source-index (position (mapping:mapping-source mapping) (.sources this)
                                               :test #'equal)))
-                  (write-string (base64-blq:encode (- source-index previous-source-index))
+                  (write-string (base64-vlq:encode (- source-index previous-source-index))
                                 out)
                   (setf previous-source-index source-index))
-                (write-string (base64-blq:encode (- (mapping:mapping-original-line mapping)
+                (write-string (base64-vlq:encode (- (mapping:mapping-original-line mapping)
                                                     1
                                                     previous-original-line))
                               out)
                 (setf previous-original-line (1- (mapping:mapping-original-line mapping)))
-                (write-string (base64-blq:encode (- (mapping:mapping-original-column mapping)
+                (write-string (base64-vlq:encode (- (mapping:mapping-original-column mapping)
                                                     previous-original-column))
                               out)
                 (setf previous-original-column (mapping:mapping-original-column mapping))
                 (when (mapping:mapping-name mapping)
                   (let ((name-index (position (mapping:mapping-name mapping) (.names this)
                                               :test #'equal)))
-                    (write-string (base64-blq:encode (- name-index previous-name-index))
+                    (write-string (base64-vlq:encode (- name-index previous-name-index))
                                   out)
                     (setf previous-name-index name-index)))))))
