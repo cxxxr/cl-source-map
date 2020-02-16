@@ -6,7 +6,9 @@
                     (:mapping
                      :cl-source-map/mapping)
                     (:base64-vlq
-                     :cl-source-map/base64-vlq))
+                     :cl-source-map/base64-vlq)
+                    (:json
+                     :cl-source-map/json))
   (:export :source-map-generator
            :set-source-content
            :add-mapping))
@@ -17,7 +19,7 @@
 (defgeneric set-source-content (source-map-generator source-file source-content))
 (defgeneric add-mapping (source-map-generator mapping))
 (defgeneric serialize-mappings (source-map-generator stream))
-(defgeneric to-json (source-map-generator))
+(defgeneric to-json (source-map-generator stream))
 (defgeneric to-string (source-map-generator))
 
 (defclass source-map-generator ()
@@ -133,20 +135,24 @@
         :collect (let ((source-file (ensure-source-file this source)))
                    (gethash source-file (.sources-contents this)))))
 
-(defmethod to-json ((this source-map-generator))
-  `("version" ,+version+
-    "sources" ,(.sources this)
-    "names" ,(.names this)
-    "mappings" ,(serialize-mappings-to-string this)
-    ,@(when (.file this)
-        `("file" ,(.file this)))
-    ,@(when (.source-root this)
-        `("sourceRoot" ,(.source-root this)))
-    ,@(when (.sources-contents this)
-        `("sourcesContent" ,(generate-sources-content
-                             this
-                             (.sources this))))))
-
-#+(or)
-(defmethod to-string ((this source-map-generator))
-  )
+(defmethod to-json ((this source-map-generator) stream)
+  (json:with-json (:stream stream)
+    (json:with-json-object ()
+      (json:emit-key-value "version" (json:emit-value +version+))
+      (json:emit-key-value "sources"
+                           (json:emit-array (.sources this)))
+      (json:emit-key-value "names"
+                           (json:emit-array (.names this)))
+      (json:emit-key-value "mappings"
+                           (json:emit-string (serialize-mappings-to-string this)))
+      (when (.file this)
+        (json:emit-key-value "file"
+                             (json:emit-string (.file this))))
+      (when (.source-root this)
+        (json:emit-key-value "sourceRoot"
+                             (json:emit-string (.source-root this))))
+      (when (.sources-contents this)
+        (json:emit-key-value "sourcesContent"
+                             (json:emit-array (generate-sources-content
+                                               this
+                                               (.sources this))))))))
