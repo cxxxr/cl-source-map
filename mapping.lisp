@@ -20,7 +20,7 @@
 (defstruct (mapping (:constructor mapping))
   (generated-line (missing :generated-line) :read-only t :type line-number)
   (generated-column 0 :read-only t :type column)
-  (original-line 0 :read-only t :type (or null line-number))
+  (original-line 1 :read-only t :type (or null line-number))
   (original-column 0 :read-only t :type (or null column))
   (source nil :read-only t :type (or null string))
   (name nil :read-only t :type (or null string)))
