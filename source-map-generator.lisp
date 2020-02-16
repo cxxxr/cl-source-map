@@ -9,8 +9,7 @@
                      :cl-source-map/base64-vlq))
   (:export :source-map-generator
            :set-source-content
-           :add-mapping
-           :serialize-mappings))
+           :add-mapping))
 (in-package :cl-source-map/source-map-generator)
 
 (defgeneric set-source-content (source-map-generator source-file source-content))
