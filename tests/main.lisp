@@ -710,59 +710,59 @@
   (let ((gen (make-instance 'source-map-generator)))
     (add-mapping gen
                  (mapping :generated-line 1 :generated-column 1
-                          :original-line 1 :generated-column 1
+                          :original-line 1 :original-column 1
                           :source "one.js"))
     (add-mapping gen
                  (mapping :generated-line 1 :generated-column 5
-                          :original-line 1 :generated-column 5
+                          :original-line 1 :original-column 5
                           :source "one.js"))
     (add-mapping gen
                  (mapping :generated-line 1 :generated-column 9
-                          :original-line 1 :generated-column 11
+                          :original-line 1 :original-column 11
                           :source "one.js"))
     (add-mapping gen
                  (mapping :generated-line 1 :generated-column 18
-                          :original-line 1 :generated-column 21
+                          :original-line 1 :original-column 21
                           :source "one.js"
                           :name "bar"))
     (add-mapping gen
                  (mapping :generated-line 1 :generated-column 21
-                          :original-line 2 :generated-column 3
+                          :original-line 2 :original-column 3
                           :source "one.js"))
     (add-mapping gen
                  (mapping :generated-line 1 :generated-column 28
-                          :original-line 2 :generated-column 10
+                          :original-line 2 :original-column 10
                           :source "one.js"
                           :name "baz"))
     (add-mapping gen
                  (mapping :generated-line 1 :generated-column 32
-                          :original-line 2 :generated-column 14
+                          :original-line 2 :original-column 14
                           :source "one.js"
                           :name "bar"))
     (add-mapping gen
                  (mapping :generated-line 2 :generated-column 1
-                          :original-line 1 :generated-column 1
+                          :original-line 1 :original-column 1
                           :source "two.js"))
     (add-mapping gen
                  (mapping :generated-line 2 :generated-column 5
-                          :original-line 1 :generated-column 5
+                          :original-line 1 :original-column 5
                           :source "two.js"))
     (add-mapping gen
                  (mapping :generated-line 2 :generated-column 9
-                          :original-line 1 :generated-column 11
+                          :original-line 1 :original-column 11
                           :source "two.js"))
     (add-mapping gen
                  (mapping :generated-line 2 :generated-column 18
-                          :original-line 1 :generated-column 21
+                          :original-line 1 :original-column 21
                           :source "two.js"
                           :name "n"))
     (add-mapping gen
                  (mapping :generated-line 2 :generated-column 21
-                          :original-line 2 :generated-column 3
+                          :original-line 2 :original-column 3
                           :source "two.js"))
     (add-mapping gen
                  (mapping :generated-line 2 :generated-column 28
-                          :original-line 2 :generated-column 10
+                          :original-line 2 :original-column 10
                           :source "two.js"
                           :name "n"))
     (ok (equal (serialize-mappings gen)
