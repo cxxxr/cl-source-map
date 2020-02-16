@@ -12,9 +12,13 @@
            :add-mapping))
 (in-package :cl-source-map/source-map-generator)
 
+(defparameter +version+ 3)
+
 (defgeneric set-source-content (source-map-generator source-file source-content))
 (defgeneric add-mapping (source-map-generator mapping))
 (defgeneric serialize-mappings (source-map-generator stream))
+(defgeneric to-json (source-map-generator))
+(defgeneric to-string (source-map-generator))
 
 (defclass source-map-generator ()
   ((file
@@ -119,3 +123,31 @@
                                               :test #'equal)))
                     (emit (base64-vlq:encode (- name-index previous-name-index)))
                     (setf previous-name-index name-index)))))))
+
+(defun serialize-mappings-to-string (this)
+  (with-output-to-string (out)
+    (serialize-mappings this out)))
+
+#+(or)
+(defun generate-sources-content (this sources source-root)
+  )
+
+(defmethod to-json ((this source-map-generator))
+  `("version" ,+version+
+    "sources" ,(.sources this)
+    "names" ,(.names this)
+    "mappings" ,(serialize-mappings-to-string this)
+    ,@(when (.file this)
+        `("file" ,(.file this)))
+    ,@(when (.source-root this)
+        `("sourceRoot" ,(.source-root this)))
+    #+(or) ;TODO
+    ,@(when (.source-contents this)
+        `("sourcesContent" ,(generate-sources-content
+                             this
+                             (.sources this)
+                             (.source-root this))))))
+
+#+(or)
+(defmethod to-string ((this source-map-generator))
+  )
