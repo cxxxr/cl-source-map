@@ -128,9 +128,10 @@
   (with-output-to-string (out)
     (serialize-mappings this out)))
 
-#+(or)
-(defun generate-sources-content (this sources source-root)
-  )
+(defun generate-sources-content (this sources)
+  (loop :for source :in sources
+        :collect (let ((source-file (ensure-source-file this source)))
+                   (gethash source-file (.source-contents this)))))
 
 (defmethod to-json ((this source-map-generator))
   `("version" ,+version+
@@ -141,12 +142,10 @@
         `("file" ,(.file this)))
     ,@(when (.source-root this)
         `("sourceRoot" ,(.source-root this)))
-    #+(or) ;TODO
     ,@(when (.source-contents this)
         `("sourcesContent" ,(generate-sources-content
                              this
-                             (.sources this)
-                             (.source-root this))))))
+                             (.sources this))))))
 
 #+(or)
 (defmethod to-string ((this source-map-generator))
