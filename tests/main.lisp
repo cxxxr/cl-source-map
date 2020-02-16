@@ -770,7 +770,10 @@
 (deftest source-map-generator.serialize-mappings
   (let ((gen (create-source-map-generator-testdata)))
     (ok (equal (with-output-to-string (out) (generator::serialize-mappings gen out))
-               "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA"))
+               "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA"))))
+
+(deftest source-map-generator.to-json
+  (let ((gen (create-source-map-generator-testdata)))
     (ok (equal (with-output-to-string (out)
                  (to-json gen out))
                "{\"version\":3,\"sources\":[\"one.js\",\"two.js\"],\"names\":[\"bar\",\"baz\",\"n\"],\"mappings\":\"CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA\",\"sourcesContent\":[[],[]]}"))))
