@@ -86,14 +86,20 @@
             (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1)
             (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1))))
   (ok (= -1 (mapping-list::compare-by-generated-position-inflated
-             (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1 :name "abc")
-             (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1 :name "abd"))))
+             (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1
+                      :name "abc")
+             (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1
+                      :name "abd"))))
   (ok (= 1 (mapping-list::compare-by-generated-position-inflated
-            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1 :name "abd")
-            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1 :name "abc"))))
+            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1
+                     :name "abd")
+            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1
+                     :name "abc"))))
   (ok (= 0 (mapping-list::compare-by-generated-position-inflated
-            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1 :name "abc")
-            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1 :name "abc")))))
+            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1
+                     :name "abc")
+            (mapping :generated-line 2 :source "aaa" :original-line 1 :original-column 1
+                     :name "abc")))))
 
 (deftest mapping-list.generated-position-after-p
   (ok (mapping-list::generated-position-after-p
@@ -150,7 +156,8 @@
         (mapping-2 (mapping :generated-line 24 :generated-column 79 :source "source-1" :name nil))
         (mapping-3 (mapping :generated-line 96 :generated-column 10 :source nil :name "name-1"))
         (mapping-4 (mapping :generated-line 23 :generated-column 40 :source "source-2" :name nil))
-        (mapping-5 (mapping :generated-line 52 :generated-column 57 :source "source-3" :name "name-2")))
+        (mapping-5 (mapping :generated-line 52 :generated-column 57 :source "source-3"
+                            :name "name-2")))
     (declare (ignorable mapping-1 mapping-2 mapping-3 mapping-4 mapping-5))
 
     (add-mapping gen mapping-1)
@@ -182,3 +189,65 @@
     (ok (set-equal (generator::.names gen) '("name-1" "name-2")))
     (ok (equal (mapping-list:to-list (generator::.mappings gen))
                (list mapping-4 mapping-2 mapping-1 mapping-5 mapping-3)))))
+
+(deftest source-map-generator.serialize-mappings
+  (let ((gen (make-instance 'source-map-generator)))
+    (add-mapping gen
+                 (mapping :generated-line 1 :generated-column 1
+                          :original-line 1 :generated-column 1
+                          :source "one.js"))
+    (add-mapping gen
+                 (mapping :generated-line 1 :generated-column 5
+                          :original-line 1 :generated-column 5
+                          :source "one.js"))
+    (add-mapping gen
+                 (mapping :generated-line 1 :generated-column 9
+                          :original-line 1 :generated-column 11
+                          :source "one.js"))
+    (add-mapping gen
+                 (mapping :generated-line 1 :generated-column 18
+                          :original-line 1 :generated-column 21
+                          :source "one.js"
+                          :name "bar"))
+    (add-mapping gen
+                 (mapping :generated-line 1 :generated-column 21
+                          :original-line 2 :generated-column 3
+                          :source "one.js"))
+    (add-mapping gen
+                 (mapping :generated-line 1 :generated-column 28
+                          :original-line 2 :generated-column 10
+                          :source "one.js"
+                          :name "baz"))
+    (add-mapping gen
+                 (mapping :generated-line 1 :generated-column 32
+                          :original-line 2 :generated-column 14
+                          :source "one.js"
+                          :name "bar"))
+    (add-mapping gen
+                 (mapping :generated-line 2 :generated-column 1
+                          :original-line 1 :generated-column 1
+                          :source "two.js"))
+    (add-mapping gen
+                 (mapping :generated-line 2 :generated-column 5
+                          :original-line 1 :generated-column 5
+                          :source "two.js"))
+    (add-mapping gen
+                 (mapping :generated-line 2 :generated-column 9
+                          :original-line 1 :generated-column 11
+                          :source "two.js"))
+    (add-mapping gen
+                 (mapping :generated-line 2 :generated-column 18
+                          :original-line 1 :generated-column 21
+                          :source "two.js"
+                          :name "n"))
+    (add-mapping gen
+                 (mapping :generated-line 2 :generated-column 21
+                          :original-line 2 :generated-column 3
+                          :source "two.js"))
+    (add-mapping gen
+                 (mapping :generated-line 2 :generated-column 28
+                          :original-line 2 :generated-column 10
+                          :source "two.js"
+                          :name "n"))
+    (ok (equal (serialize-mappings gen)
+               "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA"))))
