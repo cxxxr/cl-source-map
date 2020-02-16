@@ -9,7 +9,8 @@
                      :cl-source-map/base64-vlq))
   (:export :source-map-generator
            :set-source-content
-           :add-mapping))
+           :add-mapping
+           :serialize-mappings))
 (in-package :cl-source-map/source-map-generator)
 
 (defgeneric set-source-content (source-map-generator source-file source-content))
@@ -60,7 +61,7 @@
 (defmethod add-mapping ((this source-map-generator) mapping)
   ;; TODO: validate arguments
   (macrolet ((push! (this accessor object)
-               `(when (member ,object (,accessor ,this) :test #'equal)
+               `(unless (member ,object (,accessor ,this) :test #'equal)
                   (setf (,accessor ,this)
                         (nconc (,accessor ,this) (list ,object))))))
     (when-let (source (mapping:mapping-source mapping))
