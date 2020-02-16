@@ -44,9 +44,9 @@
    (mappings
     :initform (make-instance 'mapping-list:mapping-list)
     :accessor .mappings)
-   (source-contents
+   (sources-contents
     :initform (make-hash-table :test 'equal)
-    :accessor .source-contents)))
+    :accessor .sources-contents)))
 
 (defun ensure-source-file (source-map-generator source-file)
   (namestring
@@ -57,9 +57,9 @@
 (defmethod set-source-content ((this source-map-generator) source-file source-content)
   (let ((source-file (ensure-source-file this source-file)))
     (if source-content
-        (setf (gethash source-file (.source-contents this))
+        (setf (gethash source-file (.sources-contents this))
               source-content)
-        (remhash source-file (.source-contents this)))))
+        (remhash source-file (.sources-contents this)))))
 
 (defmethod add-mapping ((this source-map-generator) mapping)
   ;; TODO: validate arguments
@@ -131,7 +131,7 @@
 (defun generate-sources-content (this sources)
   (loop :for source :in sources
         :collect (let ((source-file (ensure-source-file this source)))
-                   (gethash source-file (.source-contents this)))))
+                   (gethash source-file (.sources-contents this)))))
 
 (defmethod to-json ((this source-map-generator))
   `("version" ,+version+
@@ -142,7 +142,7 @@
         `("file" ,(.file this)))
     ,@(when (.source-root this)
         `("sourceRoot" ,(.source-root this)))
-    ,@(when (.source-contents this)
+    ,@(when (.sources-contents this)
         `("sourcesContent" ,(generate-sources-content
                              this
                              (.sources this))))))

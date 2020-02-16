@@ -532,28 +532,28 @@
 (deftest source-map-generator.set-source-content
   (let ((gen (make-instance 'source-map-generator)))
     (set-source-content gen "hoge.lisp" "aaa")
-    (ok (= 1 (hash-table-count (generator::.source-contents gen))))
-    (ok (equal "aaa" (gethash "hoge.lisp" (generator::.source-contents gen))))
+    (ok (= 1 (hash-table-count (generator::.sources-contents gen))))
+    (ok (equal "aaa" (gethash "hoge.lisp" (generator::.sources-contents gen))))
 
     (set-source-content gen "hoge.lisp" "bbb")
-    (ok (= 1 (hash-table-count (generator::.source-contents gen))))
-    (ok (equal "bbb" (gethash "hoge.lisp" (generator::.source-contents gen))))
+    (ok (= 1 (hash-table-count (generator::.sources-contents gen))))
+    (ok (equal "bbb" (gethash "hoge.lisp" (generator::.sources-contents gen))))
 
     (set-source-content gen "hoge.lisp" nil)
-    (ok (= 0 (hash-table-count (generator::.source-contents gen))))
+    (ok (= 0 (hash-table-count (generator::.sources-contents gen))))
 
     (set-source-content gen "hoge.lisp" "ldfj")
-    (ok (= 1 (hash-table-count (generator::.source-contents gen))))
-    (ok (equal "ldfj" (gethash "hoge.lisp" (generator::.source-contents gen))))
+    (ok (= 1 (hash-table-count (generator::.sources-contents gen))))
+    (ok (equal "ldfj" (gethash "hoge.lisp" (generator::.sources-contents gen))))
 
     (set-source-content gen "piyo.lisp" "lasdj")
-    (ok (= 2 (hash-table-count (generator::.source-contents gen))))
-    (ok (equal "lasdj" (gethash "piyo.lisp" (generator::.source-contents gen)))))
+    (ok (= 2 (hash-table-count (generator::.sources-contents gen))))
+    (ok (equal "lasdj" (gethash "piyo.lisp" (generator::.sources-contents gen)))))
 
   (let ((gen (make-instance 'source-map-generator :source-root "/root/")))
     (set-source-content gen "hoge.lisp" "a")
-    (ok (equal "a" (gethash "/root/hoge.lisp" (generator::.source-contents gen))))
-    (ok (= 1 (hash-table-count (generator::.source-contents gen))))))
+    (ok (equal "a" (gethash "/root/hoge.lisp" (generator::.sources-contents gen))))
+    (ok (= 1 (hash-table-count (generator::.sources-contents gen))))))
 
 (deftest compare-by-generated-position-inflated
   (ok (= -1 (mapping-list::compare-by-generated-position-inflated
