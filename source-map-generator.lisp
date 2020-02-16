@@ -11,7 +11,8 @@
                      :cl-source-map/json))
   (:export :source-map-generator
            :set-source-content
-           :add-mapping))
+           :add-mapping
+           :to-json))
 (in-package :cl-source-map/source-map-generator)
 
 (defparameter +version+ 3)

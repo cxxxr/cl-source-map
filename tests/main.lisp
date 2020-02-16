@@ -706,7 +706,7 @@
     (ok (equal (mapping-list:to-list (generator::.mappings gen))
                (list mapping-4 mapping-2 mapping-1 mapping-5 mapping-3)))))
 
-(deftest source-map-generator.serialize-mappings
+(defun create-source-map-generator-testdata ()
   (let ((gen (make-instance 'source-map-generator)))
     (add-mapping gen
                  (mapping :generated-line 1 :generated-column 1
@@ -765,5 +765,12 @@
                           :original-line 2 :original-column 10
                           :source "two.js"
                           :name "n"))
+    gen))
+
+(deftest source-map-generator.serialize-mappings
+  (let ((gen (create-source-map-generator-testdata)))
     (ok (equal (with-output-to-string (out) (generator::serialize-mappings gen out))
-               "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA"))))
+               "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA"))
+    (ok (equal (with-output-to-string (out)
+                 (to-json gen out))
+               "{\"version\":3,\"sources\":[\"one.js\",\"two.js\"],\"names\":[\"bar\",\"baz\",\"n\"],\"mappings\":\"CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA\",\"sourcesContent\":[[],[]]}"))))
