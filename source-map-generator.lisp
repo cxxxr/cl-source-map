@@ -15,7 +15,7 @@
 
 (defgeneric set-source-content (source-map-generator source-file source-content))
 (defgeneric add-mapping (source-map-generator mapping))
-(defgeneric serialize-mappings (source-map-generator))
+(defgeneric serialize-mappings (source-map-generator stream))
 
 (defclass source-map-generator ()
   ((file
@@ -70,8 +70,14 @@
       (push! this .names name)))
   (mapping-list:add-mapping (.mappings this) mapping))
 
-(defmethod serialize-mappings ((this source-map-generator))
-  (with-output-to-string (out)
+(defmethod serialize-mappings ((this source-map-generator) stream)
+  (declare (optimize (speed 0) (safety 3) (debug 3)))
+  (flet ((emit (value)
+           (etypecase value
+             (string
+              (write-string value stream))
+             (character
+              (write-char value stream)))))
     (loop :with previous-generated-column := 0
           :and previous-generated-line := 1
           :and previous-original-column := 0
@@ -84,38 +90,34 @@
           :do (block continue
                 (cond ((/= (mapping:mapping-generated-line mapping)
                            previous-generated-line)
+                       (setf previous-generated-column 0)
                        (loop :until (= (mapping:mapping-generated-line mapping)
                                        previous-generated-line)
-                             :do (write-char #\; out)
+                             :do (emit #\;)
                                  (incf previous-generated-line)))
                       ((> i 0)
                        (unless (mapping-list:compare-by-generated-position-inflated
                                 mapping
                                 previous-mapping)
                          (return-from continue))
-                       (write-char #\, out))))
-              (write-string (base64-vlq:encode (- (mapping:mapping-generated-column mapping)
-                                                  previous-generated-column))
-                            out)
+                       (emit #\,))))
+              (emit (base64-vlq:encode (- (mapping:mapping-generated-column mapping)
+                                          previous-generated-column)))
               (setf previous-generated-column (mapping:mapping-generated-column mapping))
               (when (mapping:mapping-source mapping)
                 (let ((source-index (position (mapping:mapping-source mapping) (.sources this)
                                               :test #'equal)))
-                  (write-string (base64-vlq:encode (- source-index previous-source-index))
-                                out)
+                  (emit (base64-vlq:encode (- source-index previous-source-index)))
                   (setf previous-source-index source-index))
-                (write-string (base64-vlq:encode (- (mapping:mapping-original-line mapping)
-                                                    1
-                                                    previous-original-line))
-                              out)
+                (emit (base64-vlq:encode (- (mapping:mapping-original-line mapping)
+                                            1
+                                            previous-original-line)))
                 (setf previous-original-line (1- (mapping:mapping-original-line mapping)))
-                (write-string (base64-vlq:encode (- (mapping:mapping-original-column mapping)
-                                                    previous-original-column))
-                              out)
+                (emit (base64-vlq:encode (- (mapping:mapping-original-column mapping)
+                                            previous-original-column)))
                 (setf previous-original-column (mapping:mapping-original-column mapping))
                 (when (mapping:mapping-name mapping)
                   (let ((name-index (position (mapping:mapping-name mapping) (.names this)
                                               :test #'equal)))
-                    (write-string (base64-vlq:encode (- name-index previous-name-index))
-                                  out)
+                    (emit (base64-vlq:encode (- name-index previous-name-index)))
                     (setf previous-name-index name-index)))))))

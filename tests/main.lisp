@@ -765,5 +765,5 @@
                           :original-line 2 :original-column 10
                           :source "two.js"
                           :name "n"))
-    (ok (equal (serialize-mappings gen)
-               "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA"))))
+    (values (with-output-to-string (out) (serialize-mappings gen out))
+            "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA")))
