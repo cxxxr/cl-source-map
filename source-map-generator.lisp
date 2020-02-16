@@ -70,7 +70,6 @@
   (mapping-list:add-mapping (.mappings this) mapping))
 
 (defmethod serialize-mappings ((this source-map-generator) stream)
-  (declare (optimize (speed 0) (safety 3) (debug 3)))
   (flet ((emit (value)
            (etypecase value
              (string
