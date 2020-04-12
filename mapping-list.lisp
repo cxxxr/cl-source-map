@@ -81,8 +81,7 @@
       (let ((sorted-list
               (sort (copy-list (tlist-to-list (.list this)))
                     (lambda (x y)
-                      (>= 0 (compare-by-generated-position-inflated x y)))))
-            (tlist (.list this)))
+                      (>= 0 (compare-by-generated-position-inflated x y))))))
         (setf (.list this) (list-to-tlist sorted-list)
               (.sorted this) t)
         sorted-list)))
