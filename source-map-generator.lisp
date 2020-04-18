@@ -152,7 +152,7 @@
       (when (.source-root this)
         (json:emit-key-value "sourceRoot"
                              (json:emit-string (.source-root this))))
-      (when (.sources-contents this)
+      (when (plusp (hash-table-count (.sources-contents this)))
         (json:emit-key-value "sourcesContent"
                              (json:emit-array (generate-sources-content
                                                this
