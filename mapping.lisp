@@ -12,7 +12,7 @@
 (in-package :cl-source-map/mapping)
 
 (deftype line-number ()
-  '(integer 1 *))
+  '(integer 0 *))
 
 (deftype column ()
   '(integer 0 *))
